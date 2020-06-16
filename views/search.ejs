@@ -29,7 +29,7 @@
       <div class="container">
         <div class="navbar-translate">
           <a class="navbar-brand" href="#0"
-            >Info Color
+            >MotoArbitrage
             <div class="ripple-container"></div
           ></a>
           <button
@@ -48,8 +48,8 @@
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav ml-auto">
             <li class="active nav-item">
-              <a href="javascript:;" class="nav-link">
-                Discover
+              <a href="/search" class="nav-link">
+                Search
               </a>
             </li>
             <li class="nav-item">
@@ -62,14 +62,19 @@
                 Settings
               </a>
             </li>
+            <li class="nav-item">
+              <a href="/users/logout" class="nav-link">
+                Logout
+              </a>
+            </li>
           </ul>
         </div>
       </div>
     </nav>
     <div class="main">
       <div class="container">
-        <div class="section text-center">
-          <form>
+        <div class="section">
+          <form method="POST" id="search-form" action="parse">
             <div class="row">
               <div class="form-group col-md-6 mx-auto">
                   <span>
@@ -77,7 +82,7 @@
                 <input required
                   type="text"
                   class="form-control"
-                  id="exampleInputEmail1"
+                  name="keyword"
                   placeholder=""
                 />
                 
@@ -89,87 +94,80 @@
                   <div class="input-group-prepend"><span>Referrence Price(Optional)</span></div>
                   <input
                     type="number"
+                    name="refPrice"
                     class="form-control"
-                    id="exampleInputEmail1"
-                    placeholder=""
+                    placeholder="0"
+             
                   />
                 </div>
                 <div class="form-group col-md-3">
                     <span>
-                  <div class="input-group-prepend"><span>Referrence Price(Optional)</span></div>
+                  <div class="input-group-prepend"><span>% Under Referrence(Optional)</span></div>
                   <input
                     type="number"
                     class="form-control"
-                    id="exampleInputEmail1"
-                    placeholder=""
+                    placeholder="0"
+                    name="refPercent"
                   />
                 </div>
               </div>
 
-              <div class="row col-md-6 mx-auto">
-                  <div class="col-md-4">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          Option one is this
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          Option one is this
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          Option one is this
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          Option one is this
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" value="">
-                          Option one is this
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>
-                        </label>
-                      </div>
-                  </div>
-              </div>
-
             
-            </br>
-            <button type="submit" class="btn btn-primary">Submit</button>
+              <div class="row col-md-6 mx-auto">
+                <ul>
+                  <li>
+                        <div class="form-check">
+                        <label class="form-check-label">
+                          <input class="form-check-input" type="checkbox" name="websitesChecked" checked="true" value="usedca">
+                          usedca.com
+                          <span class="form-check-sign">
+                            <span class="check"></span>
+                          </span>
+                        </label>
+                      </div>
+                  </li>
+           
+                  <li>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" name="websitesChecked" checked="true" value="kijiji">
+                        kijiji.com
+                        <span class="form-check-sign">
+                          <span class="check"></span>
+                        </span>
+                      </label>
+                    </div>
+                  </li>
+           
+                  <li>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" name="websitesChecked" checked="true" value="autotrader">
+                        autotrader.ca
+                        <span class="form-check-sign">
+                          <span class="check"></span>
+                        </span>
+                      </label>
+                    </div>
+                  </li>
+                  </ul>
+                  <ul>
+                    </ul>
+   
+              </div>
+              <div class="row">    <div class="mx-auto">
+                <button id="submit-button" type="submit" class="btn btn-primary" disabled="disabled" >
+                  <span id="submit-button-text" > Submit</span>
+                  <div class="loader" style="display:none;"></div>
+                </button>
+              </div></div>
+  
+        
+
           </form>
         </div>
       </div>
+
     </div>
 
     <!--   Core JS Files   -->
@@ -180,18 +178,32 @@
       type="text/javascript"
     ></script>
     <script src="../js/plugins/moment.min.js"></script>
-    <!--	Plugin for the Datepicker, full documentation here: https://github.com/Eonasdan/bootstrap-datetimepicker -->
-    <script
-      src="../js/plugins/bootstrap-datetimepicker.js"
-      type="text/javascript"
-    ></script>
-    <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-    <script
-      src="../js/plugins/nouislider.min.js"
-      type="text/javascript"
-    ></script>
-    <!--  Google Maps Plugin    -->
-    <!-- Control Center for Material Kit: parallax effects, scripts for the example pages etc -->
     <script src="../js/material-kit.js" type="text/javascript"></script>
   </body>
 </html>
+<script>
+$("#submit-button").on("click",()=>{
+  $("#submit-button-text").css("display","none");
+  $(".loader").css("display","block");
+  setTimeout(()=>{
+    $("#submit-button").attr("disabled",true);
+  },50)
+
+  
+})
+  $('#search-form > div:nth-child(1) > div > span > input').keyup(function() {
+
+        var empty = false;
+        $('#search-form > div:nth-child(1) > div > span > input[name="keyword"]').each(function() {
+            if ($(this).val() == '') {
+                empty = true;
+            }
+        });
+
+        if (empty) {
+            $('#submit-button').attr('disabled', 'disabled'); // updated according to http://stackoverflow.com/questions/7637790/how-to-remove-disabled-attribute-with-jquery-ie
+        } else {
+            $('#submit-button').removeAttr('disabled'); // updated according to http://stackoverflow.com/questions/7637790/how-to-remove-disabled-attribute-with-jquery-ie
+        }
+    });
+</script>
