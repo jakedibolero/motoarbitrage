@@ -20,9 +20,7 @@ module.exports = {
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-accelerated-2d-canvas",
-          "--disable-gpu",
+          "--ignore-certificate-errors",
         ],
       });
       const page = await browser.newPage();
@@ -103,9 +101,7 @@ module.exports = {
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-accelerated-2d-canvas",
-          "--disable-gpu",
+          "--ignore-certificate-errors",
         ],
       });
       const page = await browser.newPage();
@@ -206,9 +202,7 @@ module.exports = {
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-accelerated-2d-canvas",
-          "--disable-gpu",
+          "--ignore-certificate-errors",
         ],
       });
 

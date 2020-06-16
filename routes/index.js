@@ -1,6 +1,7 @@
 module.exports = function (passport) {
   var express = require("express");
   var parseLogic = require("../logic/parseLogic");
+  var testLogic = require("../logic/testLogic");
   var Promise = require("promise");
   var router = express.Router();
   const connectEnsureLogin = require("connect-ensure-login");
@@ -56,17 +57,22 @@ module.exports = function (passport) {
     var listings = [];
     var promises = [];
 
+    // websites.forEach((site) => {
+    //   if (site.group == "usedca") {
+    //     var promise = parseLogic.parseUsedCA(site.url, keyword);
+    //     promises.push(promise);
+    //   } else if (site.group == "kijiji") {
+    //     var promise = parseLogic.parseKijiji(site.url, keyword, "alberta");
+    //     promises.push(promise);
+    //   } else if (site.group == "autotrader") {
+    //     var promise = parseLogic.parseAutoTrader(site.url, keyword, "alberta");
+    //     promises.push(promise);
+    //   }
+    // });
+    var count = 0;
     websites.forEach((site) => {
-      if (site.group == "usedca") {
-        var promise = parseLogic.parseUsedCA(site.url, keyword);
-        promises.push(promise);
-      } else if (site.group == "kijiji") {
-        var promise = parseLogic.parseKijiji(site.url, keyword, "alberta");
-        promises.push(promise);
-      } else if (site.group == "autotrader") {
-        var promise = parseLogic.parseAutoTrader(site.url, keyword, "alberta");
-        promises.push(promise);
-      }
+      testLogic.testParse(count);
+      count++;
     });
 
     Promise.all(promises).then((values) => {
