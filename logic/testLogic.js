@@ -25,5 +25,7 @@ module.exports = {
     const page = await browser.newPage();
 
     await page.waitFor(5000);
+    console.log(`closing test ${count}`);
+    await browser.close();
   },
 };
