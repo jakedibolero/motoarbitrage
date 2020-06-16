@@ -22,5 +22,8 @@ module.exports = {
         "--ignore-certificate-errors",
       ],
     });
+    const page = await browser.newPage();
+
+    await page.waitFor(5000);
   },
 };
