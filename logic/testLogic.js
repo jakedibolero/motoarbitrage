@@ -166,7 +166,7 @@ module.exports = {
   },
   async parseKijiji(page, websiteUrl, keyword, province) {
     try {
-      console.time("dbsave");
+      console.log(`Start Prase${website}`);
       let options = {
         minResults: 5000,
       };
@@ -196,91 +196,7 @@ module.exports = {
       cleanList = listings.filter(function (el) {
         return el.price != 0;
       });
-      console.timeEnd("dbsave");
-      return cleanList;
-      console.log(`Start Parse${websiteUrl}`);
-      await page.goto(websiteUrl, { waitUntil: "domcontentloaded" });
-      await page.type("#SearchKeyword", keyword);
-      await page.keyboard.press("Enter");
-      await page.waitForSelector(".content");
-      var noResultElement = await page.$('[class="zero-results"]');
-      if (noResultElement !== null) {
-        await browser.close();
-        return [];
-      }
-      page.$eval(`a[href*='${province.toLowerCase()}'`, (elem) => elem.click());
-      let continueNavigating = true;
-      // let listings = [];
-      // let cleanList = [];
-      while (continueNavigating) {
-        await page.waitForSelector(".text-top-bar");
-        let result = await page.$$eval(
-          "div.clearfix:not(.breadcrumbLayout)",
-          (anchors, websiteUrl) => {
-            return anchors.map((anchor) => {
-              let listingName = anchor
-                .querySelector("div.info > div.info-container > div.title > a")
-                .textContent.trim();
-              let listingDescription = anchor
-                .querySelector(
-                  "div.info > div.info-container > div.description"
-                )
-                .textContent.trim()
-                .replace(/\n/g, "")
-                .replace(/\s+/g, " ")
-                .trim();
-              let listPrice = anchor
-                .querySelector("div.info > div.info-container > div.price")
-                .textContent.trim();
-              let price;
-              if (listPrice.charAt(0) !== "$") {
-                return null;
-              } else {
-                price = listPrice.split(".")[0].replace(/[$,]/g, "");
-              }
-
-              let listingPath = anchor
-                .querySelector("div.info > div.info-container > div.title > a")
-                .getAttribute("href");
-              let url = websiteUrl + listingPath;
-              let imgUrl =
-                anchor
-                  .querySelector("div.left-col > div.image")
-                  .querySelector("img")
-                  .getAttribute("data-src") == null
-                  ? anchor
-                      .querySelector("div.left-col > div.image")
-                      .querySelector("img")
-                      .getAttribute("src")
-                  : anchor
-                      .querySelector("div.left-col > div.image")
-                      .querySelector("img")
-                      .getAttribute("data-src");
-
-              let listing = {
-                price,
-                listingName,
-                listingDescription,
-                url,
-                imgUrl,
-              };
-              return listing;
-            });
-          },
-          websiteUrl
-        );
-        listings = listings.concat(result);
-        if ((await page.$('a[title="Next"]')) !== null) {
-          await page.click('a[title="Next"]', { waitUntil: "networkidle0" });
-        } else {
-          continueNavigating = false;
-        }
-      }
-
-      cleanList = listings.filter(function (el) {
-        return el != null;
-      });
-      console.log(`End Parse${websiteUrl}`);
+      console.log("End parse");
       return cleanList;
     } catch (err) {
       console.log(err);
