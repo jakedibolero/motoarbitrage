@@ -34,6 +34,7 @@ module.exports = function (passport) {
     var refPrice = req.body.refPrice;
     var refPercent = req.body.refPercent;
     let websitesChecked = req.body.websitesChecked;
+    let province = req.body.province;
 
     console.log(req.body.websitesChecked);
 
@@ -46,10 +47,12 @@ module.exports = function (passport) {
       { url: "https://www.kijiji.ca", group: "kijiji" },
       {
         url:
-          "https://www.autotrader.ca/motorcycles-atvs/all/on/?prv=Ontario&loc=K1Y%202B8",
+          "https://www.autotrader.ca/motorcycles-atvs/all/on/?rcp=100&prv=Ontario&loc=K1Y%202B8",
         group: "autotrader",
       },
     ];
+    var provinces = [{ name: "alberta", id: 9003 }];
+    var makes = ["harley davidson"];
     websites = websites.filter((el) => {
       return websitesChecked.includes(el.group);
     });
@@ -69,11 +72,8 @@ module.exports = function (passport) {
     //     promises.push(promise);
     //   }
     // });
-    var count = 0;
-    websites.forEach((site) => {
-      testLogic.testParse(count);
-      count++;
-    });
+
+    promises.push(testLogic.testParse(websites, provinces, makes));
 
     Promise.all(promises).then((values) => {
       values.forEach((listing) => {
@@ -89,7 +89,8 @@ module.exports = function (passport) {
           return el.price <= maxPrice;
         });
       }
-      res.render("result.ejs", { data: listings });
+      res.send("");
+      // res.render("result.ejs", { data: listings });
     });
   });
   return router;
