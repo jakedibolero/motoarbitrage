@@ -20,7 +20,7 @@ module.exports = {
       const cluster = await Cluster.launch({
         puppeteer,
         concurrency: Cluster.CONCURRENCY_CONTEXT,
-        maxConcurrency: 2,
+        maxConcurrency: 1,
         timeout: 500000,
         puppeteerOptions: {
           devtools: false,
@@ -40,6 +40,7 @@ module.exports = {
       });
 
       await cluster.task(async ({ page, data: task }) => {
+        await page.setDefaultNavigationTimeout(60000);
         if (task.site.group == "usedca") {
           let listing = await this.parseUsedCA(page, task.site.url, task.make);
 

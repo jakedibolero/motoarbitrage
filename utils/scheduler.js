@@ -15,7 +15,14 @@ var websites = [
 ];
 var provinces = [{ name: "alberta", id: 9003 }];
 var makes = ["harley davidson"];
-console.log("Starting Scheduled Scrape");
+setTimeout(() => {
+  console.log("Starting Scheduled Scrape");
+  var result = testLogic.testParse(websites, provinces, makes);
+  result.then((data) => {
+    console.log("DONE JOB");
+    console.log(data.length);
+  });
+});
 cron.schedule("*/10 * * * *", () => {
   console.log("Starting Scheduled Scrape");
   var result = testLogic.testParse(websites, provinces, makes);
