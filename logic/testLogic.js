@@ -166,7 +166,7 @@ module.exports = {
   },
   async parseKijiji(page, websiteUrl, keyword, province) {
     try {
-      console.log(`Start Prase${website}`);
+      console.log(`Start Prase${websiteUrl}`);
       let options = {
         minResults: 5000,
       };
