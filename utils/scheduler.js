@@ -15,7 +15,14 @@ var websites = [
 ];
 var provinces = [{ name: "alberta", id: 9003 }];
 var makes = ["harley davidson"];
-setTimeout(() => {
+
+setTimeout(function () {
+  console.log("Starting this now");
+  var result = testLogic.testParse(websites, provinces, makes);
+  result.then((data) => {
+    console.log("DONE JOB");
+    console.log(data.length);
+  });
   cron.schedule("*/10 * * * *", () => {
     console.log("Starting Scheduled Scrape");
     var result = testLogic.testParse(websites, provinces, makes);
@@ -24,4 +31,4 @@ setTimeout(() => {
       console.log(data.length);
     });
   });
-}, 5000);
+}, 3000);
