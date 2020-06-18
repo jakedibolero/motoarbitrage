@@ -31,9 +31,7 @@ module.exports = {
             "--ignore-certificate-errors",
             "--disable-gpu",
             "--disable-dev-shm-usage",
-            "--no-first-run",
             "--no-zygote",
-            "--single-process",
           ],
         },
       });
