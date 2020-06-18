@@ -208,6 +208,7 @@ module.exports = {
   },
   async parseAutoTrader(page, websiteUrl, keyword, province) {
     try {
+      console.log("Parsing Autotrader");
       await page.goto(websiteUrl, { waitUntil: "networkidle0" });
       await page.click("body");
       const locationElement = await page.waitForSelector("#locationAddress", {
