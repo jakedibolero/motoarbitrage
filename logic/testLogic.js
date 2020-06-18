@@ -24,7 +24,7 @@ module.exports = {
         timeout: 300000,
         puppeteerOptions: {
           devtools: false,
-          headless: false,
+          headless: true,
           args: [
             "--no-sandbox",
             "--disable-setuid-sandbox",
