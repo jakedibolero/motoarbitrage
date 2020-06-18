@@ -6,7 +6,7 @@ var websites = [
   //   { url: "https://www.usedkelowna.com", group: "usedca" },
   //   { url: "https://www.usedvernon.com", group: "usedca" },
   //   { url: "https://www.usedcalgary.com", group: "usedca" },
-  //   { url: "https://www.kijiji.ca", group: "kijiji" },
+  { url: "https://www.kijiji.ca", group: "kijiji" },
   {
     url:
       "https://www.autotrader.ca/motorcycles-atvs/all/on/?rcp=100&prv=Ontario&loc=K1Y%202B8",

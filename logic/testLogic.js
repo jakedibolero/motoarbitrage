@@ -21,7 +21,7 @@ module.exports = {
         puppeteer,
         concurrency: Cluster.CONCURRENCY_CONTEXT,
         maxConcurrency: 2,
-        timeout: 300000,
+        timeout: 500000,
         puppeteerOptions: {
           devtools: false,
           headless: true,
@@ -29,6 +29,11 @@ module.exports = {
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--ignore-certificate-errors",
+            "--disable-gpu",
+            "--disable-dev-shm-usage",
+            "--no-first-run",
+            "--no-zygote",
+            "--single-process",
           ],
         },
       });
@@ -166,7 +171,7 @@ module.exports = {
   },
   async parseKijiji(page, websiteUrl, keyword, province) {
     try {
-      console.log(`Start Prase${websiteUrl}`);
+      console.log("Kijiji parse");
       let options = {
         minResults: 5000,
       };
