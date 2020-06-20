@@ -2,6 +2,7 @@ module.exports = function (passport) {
   var express = require("express");
   var parseLogic = require("../logic/parseLogic");
   var testLogic = require("../logic/testLogic");
+  var listingLogic = require("../logic/listingLogic");
   var Promise = require("promise");
   var router = express.Router();
   const connectEnsureLogin = require("connect-ensure-login");
@@ -17,8 +18,6 @@ module.exports = function (passport) {
   router.get("/login", function (req, res, next) {
     var error = req.flash("error");
     var message = req.flash("message");
-    console.log(error);
-    console.log(message);
     res.render("login", { title: "Express", error: error, message: message });
   });
 
@@ -34,29 +33,7 @@ module.exports = function (passport) {
     var refPrice = req.body.refPrice;
     var refPercent = req.body.refPercent;
     let websitesChecked = req.body.websitesChecked;
-    let province = req.body.province;
 
-    console.log(req.body.websitesChecked);
-
-    var websites = [
-      { url: "https://www.usedvancouver.com", group: "usedca" },
-      { url: "https://www.usedkamloops.com", group: "usedca" },
-      { url: "https://www.usedkelowna.com", group: "usedca" },
-      { url: "https://www.usedvernon.com", group: "usedca" },
-      { url: "https://www.usedcalgary.com", group: "usedca" },
-      { url: "https://www.kijiji.ca", group: "kijiji" },
-      {
-        url:
-          "https://www.autotrader.ca/motorcycles-atvs/all/on/?rcp=100&prv=Ontario&loc=K1Y%202B8",
-        group: "autotrader",
-      },
-    ];
-    var provinces = [{ name: "alberta", id: 9003 }];
-    var makes = ["harley davidson"];
-    websites = websites.filter((el) => {
-      return websitesChecked.includes(el.group);
-    });
-    console.log(websites);
     var listings = [];
     var promises = [];
 
@@ -72,8 +49,9 @@ module.exports = function (passport) {
     //     promises.push(promise);
     //   }
     // });
-
-    promises.push(testLogic.testParse(websites, provinces, makes));
+    var promise = listingLogic.searchListing(websitesChecked, keyword);
+    console.log(promise);
+    promises.push(promise);
 
     Promise.all(promises).then((values) => {
       values.forEach((listing) => {
@@ -84,13 +62,10 @@ module.exports = function (passport) {
         var maxPrice = refPrice - refPrice * (refPercent / 100);
 
         listings = listings.filter(function (el) {
-          console.log(refPrice);
-          console.log(maxPrice);
           return el.price <= maxPrice;
         });
       }
-      res.send("");
-      // res.render("result.ejs", { data: listings });
+      res.render("result.ejs", { data: listings });
     });
   });
   return router;

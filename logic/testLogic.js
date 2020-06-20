@@ -17,6 +17,7 @@ module.exports = {
   async testParse(websites, provinces, makes) {
     try {
       let completeList = [];
+      let hasError = false;
       const cluster = await Cluster.launch({
         puppeteer,
         concurrency: Cluster.CONCURRENCY_CONTEXT,
@@ -37,6 +38,7 @@ module.exports = {
       });
       cluster.on("taskerror", (err, data) => {
         console.log(`Error crawling ${data}: ${err.message}`);
+        cluster.queue(data);
       });
 
       await cluster.task(async ({ page, data: task }) => {
@@ -45,6 +47,7 @@ module.exports = {
           let listing = await this.parseUsedCA(page, task.site.url, task.make);
 
           completeList = completeList.concat(listing);
+          console.log(`usedCa ${listing.length}`);
         } else if (task.site.group == "kijiji") {
           let listing = await this.parseKijiji(
             page,
@@ -54,6 +57,7 @@ module.exports = {
           );
 
           completeList = completeList.concat(listing);
+          console.log(`kijiji ${listing.length}`);
         } else if (task.site.group == "autotrader") {
           let listing = await this.parseAutoTrader(
             page,
@@ -63,6 +67,7 @@ module.exports = {
           );
 
           completeList = completeList.concat(listing);
+          console.log(`autotrader ${listing.length}`);
         }
       });
 
@@ -100,7 +105,6 @@ module.exports = {
   },
   async parseUsedCA(page, websiteUrl, keyword) {
     try {
-      console.log(websiteUrl);
       await page.goto(websiteUrl, { waitUntil: "networkidle0" });
       await page.type("#demo", keyword);
       await page.click("#submit", { waitUntil: "domcontentloaded" });
@@ -143,6 +147,7 @@ module.exports = {
                 listingDescription,
                 url,
                 imgUrl,
+                group: "usedca",
               };
               return listing;
             });
@@ -161,23 +166,24 @@ module.exports = {
       cleanList = listings.filter(function (el) {
         return el != null;
       });
-      console.log(`End Parse${websiteUrl}`);
+      await page.close();
       return cleanList;
     } catch (err) {
+      await page.close();
       console.log(err);
       return cleanList;
     }
   },
   async parseKijiji(page, websiteUrl, keyword, province) {
     try {
-      console.log("Kijiji parse");
       let options = {
         minResults: 5000,
       };
       let params = {
-        locationId: province.id, // Same as kijiji.locations.ONTARIO.OTTAWA_GATINEAU_AREA.OTTAWA
-        categoryId: 30, // Same as kijiji.categories.CARS_AND_VEHICLES
+        locationId: province.id,
+        categoryId: 30,
         keywords: keyword,
+        minPrice: 4000,
       };
       let kijijiRes = await kijiji.search(params, options);
       let listings = [];
@@ -185,7 +191,11 @@ module.exports = {
       kijijiRes.forEach((ad) => {
         let price = ad.attributes.price;
         let listingName = ad.title;
-        let listingDescription = ad.description;
+        let listingDescription = ad.description
+          .trim()
+          .replace(/\n/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
         let url = ad.url;
         let imgUrl = ad.image;
         let listing = {
@@ -194,22 +204,23 @@ module.exports = {
           listingDescription,
           url,
           imgUrl,
+          group: "kijiji",
         };
         listings.push(listing);
       });
       cleanList = listings.filter(function (el) {
         return el.price != 0;
       });
-      console.log("End parse");
+      await page.close();
       return cleanList;
     } catch (err) {
       console.log(err);
+      await page.close();
       return cleanList;
     }
   },
   async parseAutoTrader(page, websiteUrl, keyword, province) {
     try {
-      console.log("Parsing Autotrader");
       await page.goto(websiteUrl, { waitUntil: "networkidle0" });
       await page.click("body");
       const locationElement = await page.waitForSelector("#locationAddress", {
@@ -242,7 +253,7 @@ module.exports = {
 
       noResultElement = await page.$("#searchExpansionWarning.hidden");
       if (noResultElement === null) {
-        await browser.close();
+        await page.close();
         return [];
       }
       while (continueNavigating) {
@@ -297,6 +308,7 @@ module.exports = {
                 listingDescription,
                 url,
                 imgUrl,
+                group: "autotrader",
               };
               return listing;
             });
@@ -335,14 +347,14 @@ module.exports = {
         listings = listings.concat(result);
         counter++;
       }
-
-      console.log(`End Parse${websiteUrl}`);
       cleanList = listings.filter(function (el) {
         return el != null;
       });
+      await page.close();
       return cleanList;
     } catch (err) {
       console.log(err);
+      await page.close();
       return cleanList;
     }
   },
