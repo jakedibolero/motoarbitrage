@@ -33,7 +33,7 @@ setTimeout(function () {
       console.log(`Inserted ${res} listings`);
     });
   });
-  cron.schedule("*/120 * * * *", () => {
+  cron.schedule("* */4 * * *", () => {
     if (doneWithPreviousJob) {
       console.log("Starting Scheduled Scrape");
       doneWithPreviousJob = false;
