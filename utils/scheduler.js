@@ -20,33 +20,17 @@ var provinces = [
 ];
 var makes = ["harley davidson"];
 var doneWithPreviousJob = true;
-
-setTimeout(function () {
-  console.log("Starting this now");
-  doneWithPreviousJob = false;
-
-  var result = testLogic.testParse(websites, provinces, makes);
-  result.then((data) => {
-    console.log("Done with job");
-    doneWithPreviousJob = true;
-    listingLogic.updateListingDatabase(data).then((res) => {
-      console.log(`Inserted ${res} listings`);
-    });
-  });
-  cron.schedule("* */4 * * *", () => {
-    if (doneWithPreviousJob) {
-      console.log("Starting Scheduled Scrape");
-      doneWithPreviousJob = false;
-      var result = testLogic.testParse(websites, provinces, makes);
-      result.then((data) => {
-        console.log("Done with job");
-        doneWithPreviousJob = true;
-        listingLogic.updateListingDatabase(data).then((res) => {
-          console.log(`Inserted ${res} listings`);
-        });
+cron.schedule("* */4 * * *", () => {
+  if (doneWithPreviousJob) {
+    console.log("Starting Scheduled Scrape");
+    doneWithPreviousJob = false;
+    var result = testLogic.testParse(websites, provinces, makes);
+    result.then((data) => {
+      console.log("Done with job");
+      doneWithPreviousJob = true;
+      listingLogic.updateListingDatabase(data).then((res) => {
+        console.log(`Inserted ${res} listings`);
       });
-    }
-  });
-}, 3000);
-
-function updateDatabase(listings) {}
+    });
+  }
+});
