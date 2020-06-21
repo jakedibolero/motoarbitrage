@@ -1,4 +1,4 @@
-var cron = require("node-cron");
+var CronJob = require("cron").CronJob;
 var listingLogic = require("../logic/listingLogic");
 var testLogic = require("../logic/testLogic");
 var websites = [
@@ -20,7 +20,9 @@ var provinces = [
 ];
 var makes = ["harley davidson"];
 var doneWithPreviousJob = true;
-cron.schedule("* */4 * * *", () => {
+
+doneWithPreviousJob = true;
+const job = new CronJob("0 */4 * * *", () => {
   if (doneWithPreviousJob) {
     console.log("Starting Scheduled Scrape");
     doneWithPreviousJob = false;
@@ -34,3 +36,4 @@ cron.schedule("* */4 * * *", () => {
     });
   }
 });
+job.start();
