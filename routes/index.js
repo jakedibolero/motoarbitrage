@@ -7,6 +7,28 @@ module.exports = function (passport) {
   var router = express.Router();
   const connectEnsureLogin = require("connect-ensure-login");
 
+  ///
+  var websites = [
+    { url: "https://www.usedvancouver.com", group: "usedca" },
+    { url: "https://www.usedkamloops.com", group: "usedca" },
+    { url: "https://www.usedkelowna.com", group: "usedca" },
+    { url: "https://www.usedvernon.com", group: "usedca" },
+    { url: "https://www.usedcalgary.com", group: "usedca" },
+    { url: "https://www.kijiji.ca", group: "kijiji" },
+    {
+      url:
+        "https://www.autotrader.ca/motorcycles-atvs/all/on/?rcp=100&prv=Ontario&loc=K1Y%202B8",
+      group: "autotrader",
+    },
+  ];
+  var provinces = [
+    { name: "alberta", id: 9003 },
+    { name: "british-columbia", id: 9007 },
+  ];
+  var makes = ["harley davidson"];
+
+  /////
+
   /* GET home page. */
   router.get("/", function (req, res, next) {
     if (req.user) {
@@ -67,6 +89,11 @@ module.exports = function (passport) {
       }
       res.render("result.ejs", { data: listings });
     });
+  });
+
+  router.get("/updateDB", function () {
+    testLogic.testParse(websites, provinces, makes);
+    res.send("Processing");
   });
   return router;
 };

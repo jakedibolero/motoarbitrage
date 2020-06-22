@@ -21,7 +21,6 @@ var provinces = [
 var makes = ["harley davidson"];
 var doneWithPreviousJob = true;
 
-doneWithPreviousJob = true;
 const job = new CronJob("0 */4 * * *", () => {
   if (doneWithPreviousJob) {
     console.log("Starting Scheduled Scrape");
