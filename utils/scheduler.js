@@ -21,7 +21,7 @@ var provinces = [
 var makes = ["harley davidson"];
 var doneWithPreviousJob = true;
 
-const job = new CronJob("* */4 * * *", () => runScrape());
+const job = new CronJob("0 */4 * * *", () => runScrape());
 job.start();
 
 function runScrape() {
