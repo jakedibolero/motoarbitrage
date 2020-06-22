@@ -18,7 +18,7 @@ module.exports = {
     try {
       let completeList = [];
       let errorTry = 5;
-      let hasError = false;
+      let maxError = false;
       const cluster = await Cluster.launch({
         puppeteer,
         concurrency: Cluster.CONCURRENCY_CONTEXT,
@@ -42,8 +42,10 @@ module.exports = {
         if (errorTry > 0) {
           console.log("Retry");
           cluster.queue(data);
+          errorTry = errorTry - 1;
+        } else {
+          maxError = true;
         }
-        errorTry = errorTry - 1;
       });
 
       await cluster.task(async ({ page, data: task }) => {
@@ -104,10 +106,11 @@ module.exports = {
       console.log("Cluster idle");
       await cluster.close();
       console.log("Cluster closed");
+      if (maxError) return undefined;
       return completeList;
     } catch (err) {
       console.log(err);
-      return completeList;
+      return undefined;
     }
   },
   async parseUsedCA(page, websiteUrl, keyword) {
