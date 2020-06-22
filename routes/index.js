@@ -91,7 +91,7 @@ module.exports = function (passport) {
     });
   });
 
-  router.get("/updateDB", function () {
+  router.get("/updateDB", function (req, res, next) {
     testLogic.testParse(websites, provinces, makes);
     res.send("Processing");
   });

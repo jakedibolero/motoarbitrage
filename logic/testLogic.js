@@ -96,7 +96,9 @@ module.exports = {
         }
       });
       await cluster.idle();
+      console.log("Cluster idle");
       await cluster.close();
+      console.log("Cluster closed");
       return completeList;
     } catch (err) {
       console.log(err);
