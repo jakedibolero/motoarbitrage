@@ -1,6 +1,5 @@
 const { addExtra } = require("puppeteer-extra");
 const vanillaPuppeteer = require("puppeteer");
-const kijiji = require("kijiji-scraper");
 
 const Listing = require("../models/listing.model");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
@@ -178,6 +177,7 @@ module.exports = {
   },
   async parseKijiji(page, websiteUrl, keyword, province) {
     try {
+      var kijiji = require("kijiji-scraper");
       let options = {
         minResults: 5000,
       };
@@ -214,6 +214,7 @@ module.exports = {
         return el.price != 0;
       });
       await page.close();
+      kijiji = null;
       return cleanList;
     } catch (err) {
       console.log(err);
