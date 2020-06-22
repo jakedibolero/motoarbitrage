@@ -1,5 +1,6 @@
 const { addExtra } = require("puppeteer-extra");
 const vanillaPuppeteer = require("puppeteer");
+const kijiji = require("kijiji-scraper");
 
 const Listing = require("../models/listing.model");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
@@ -16,6 +17,7 @@ module.exports = {
   async testParse(websites, provinces, makes) {
     try {
       let completeList = [];
+      let errorTry = 5;
       let hasError = false;
       const cluster = await Cluster.launch({
         puppeteer,
@@ -37,7 +39,11 @@ module.exports = {
       });
       cluster.on("taskerror", (err, data) => {
         console.log(`Error crawling ${data}: ${err.message}`);
-        cluster.queue(data);
+        if (errorTry > 0) {
+          console.log("Retry");
+          cluster.queue(data);
+        }
+        errorTry = errorTry - 1;
       });
 
       await cluster.task(async ({ page, data: task }) => {
@@ -177,45 +183,129 @@ module.exports = {
   },
   async parseKijiji(page, websiteUrl, keyword, province) {
     try {
-      var kijiji = require("kijiji-scraper");
-      let options = {
-        minResults: 5000,
-      };
-      let params = {
-        locationId: province.id,
-        categoryId: 30,
-        keywords: keyword,
-        minPrice: 4000,
-      };
-      let kijijiRes = await kijiji.search(params, options);
+      await page.goto(websiteUrl, { waitUntil: "domcontentloaded" });
+      await page.type("#SearchKeyword", keyword);
+      await page.keyboard.press("Enter");
+      await page.waitForSelector(".content");
+      var noResultElement = await page.$('[class="zero-results"]');
+      if (noResultElement !== null) {
+        await page.close();
+        return [];
+      }
+      page.$eval(`a[href*='${province.name.toLowerCase()}'`, (elem) =>
+        elem.click()
+      );
+      let continueNavigating = true;
       let listings = [];
       let cleanList = [];
-      kijijiRes.forEach((ad) => {
-        let price = ad.attributes.price;
-        let listingName = ad.title;
-        let listingDescription = ad.description
-          .trim()
-          .replace(/\n/g, "")
-          .replace(/\s+/g, " ")
-          .trim();
-        let url = ad.url;
-        let imgUrl = ad.image;
-        let listing = {
-          price,
-          listingName,
-          listingDescription,
-          url,
-          imgUrl,
-          group: "kijiji",
-        };
-        listings.push(listing);
-      });
-      cleanList = listings.filter(function (el) {
-        return el.price != 0;
-      });
+      while (continueNavigating) {
+        await page.waitForSelector(".text-top-bar");
+        let result = await page.$$eval(
+          "div.clearfix:not(.breadcrumbLayout)",
+          (anchors, websiteUrl) => {
+            return anchors.map((anchor) => {
+              let listingName = anchor
+                .querySelector("div.info > div.info-container > div.title > a")
+                .textContent.trim();
+              let listingDescription = anchor
+                .querySelector(
+                  "div.info > div.info-container > div.description"
+                )
+                .textContent.trim()
+                .replace(/\n/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+              let listPrice = anchor
+                .querySelector("div.info > div.info-container > div.price")
+                .textContent.trim();
+              let price;
+              if (listPrice.charAt(0) !== "$") {
+                return null;
+              } else {
+                price = listPrice.split(".")[0].replace(/[$,]/g, "");
+              }
+
+              let listingPath = anchor
+                .querySelector("div.info > div.info-container > div.title > a")
+                .getAttribute("href");
+              let url = websiteUrl + listingPath;
+              let imgUrl =
+                anchor
+                  .querySelector("div.left-col > div.image")
+                  .querySelector("img")
+                  .getAttribute("data-src") == null
+                  ? anchor
+                      .querySelector("div.left-col > div.image")
+                      .querySelector("img")
+                      .getAttribute("src")
+                  : anchor
+                      .querySelector("div.left-col > div.image")
+                      .querySelector("img")
+                      .getAttribute("data-src");
+
+              let listing = {
+                price,
+                listingName,
+                listingDescription,
+                url,
+                imgUrl,
+                group: "kijiji",
+              };
+              return listing;
+            });
+          },
+          websiteUrl
+        );
+        listings = listings.concat(result);
+
+        if ((await page.$('a[title="Next"]')) !== null) {
+          await page.click('a[title="Next"]', { waitUntil: "networkidle0" });
+        } else {
+          continueNavigating = false;
+        }
+      }
       await page.close();
-      kijiji = null;
+      cleanList = listings.filter(function (el) {
+        return el != null;
+      });
       return cleanList;
+      // let options = {
+      //   minResults: 5000,
+      // };
+      // let params = {
+      //   locationId: province.id,
+      //   categoryId: 30,
+      //   keywords: keyword,
+      //   minPrice: 4000,
+      // };
+      // let kijijiRes = await kijiji.search(params, options);
+      // let listings = [];
+      // let cleanList = [];
+      // kijijiRes.forEach((ad) => {
+      //   let price = ad.attributes.price;
+      //   let listingName = ad.title;
+      //   let listingDescription = ad.description
+      //     .trim()
+      //     .replace(/\n/g, "")
+      //     .replace(/\s+/g, " ")
+      //     .trim();
+      //   let url = ad.url;
+      //   let imgUrl = ad.image;
+      //   let listing = {
+      //     price,
+      //     listingName,
+      //     listingDescription,
+      //     url,
+      //     imgUrl,
+      //     group: "kijiji",
+      //   };
+      //   listings.push(listing);
+      // });
+      // cleanList = listings.filter(function (el) {
+      //   return el.price != 0;
+      // });
+      // await page.close();
+      // return cleanList;
     } catch (err) {
       console.log(err);
       await page.close();

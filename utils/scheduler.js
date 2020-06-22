@@ -30,11 +30,13 @@ function runScrape() {
     doneWithPreviousJob = false;
     var result = testLogic.testParse(websites, provinces, makes);
     result.then((data) => {
-      listingLogic.updateListingDatabase(data).then((res) => {
-        console.log(`Inserted ${res} listings`);
-        console.log("Done with job");
-        doneWithPreviousJob = true;
-      });
+      if (data.length != 0) {
+        listingLogic.updateListingDatabase(data).then((res) => {
+          console.log(`Inserted ${res} listings`);
+          console.log("Done with job");
+          doneWithPreviousJob = true;
+        });
+      }
     });
   }
 }
