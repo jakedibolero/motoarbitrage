@@ -21,18 +21,23 @@ var provinces = [
 var makes = ["harley davidson"];
 var doneWithPreviousJob = true;
 
-const job = new CronJob("0 */4 * * *", () => {
+const job = new CronJob("* */4 * * *", () => runScrape());
+job.start();
+
+function runScrape() {
   if (doneWithPreviousJob) {
     console.log("Starting Scheduled Scrape");
     doneWithPreviousJob = false;
     var result = testLogic.testParse(websites, provinces, makes);
     result.then((data) => {
-      console.log("Done with job");
-      doneWithPreviousJob = true;
       listingLogic.updateListingDatabase(data).then((res) => {
         console.log(`Inserted ${res} listings`);
+        console.log("Done with job");
+        doneWithPreviousJob = true;
       });
     });
   }
-});
-job.start();
+}
+module.exports = {
+  runScrape,
+};

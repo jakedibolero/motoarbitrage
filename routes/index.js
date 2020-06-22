@@ -1,3 +1,5 @@
+const scheduler = require("../utils/scheduler");
+
 module.exports = function (passport) {
   var express = require("express");
   var parseLogic = require("../logic/parseLogic");
@@ -92,7 +94,7 @@ module.exports = function (passport) {
   });
 
   router.get("/updateDB", function (req, res, next) {
-    testLogic.testParse(websites, provinces, makes);
+    scheduler.runScrape();
     res.send("Processing");
   });
   return router;
