@@ -38,7 +38,11 @@ module.exports = {
       var listing = await Listing.findById(listingID).exec();
       if (listing == null) {
         msg.type = "error";
-        msg.msg = "This listing doesn't exist anymore";
+        msg.msg = "This listing doesn't exist anymore. Listing removed.";
+        user.savedListings = user.savedListings.filter(
+          (x) => x._id != listingID
+        );
+        user.save();
         return msg;
       }
       if (user.savedListings.find((x) => x._id == listingID) != null) {

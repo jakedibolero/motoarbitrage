@@ -19,6 +19,8 @@ module.exports = function (passport) {
     res.render("favorites.ejs", {
       data: req.user.savedListings,
       savedListings: req.user.savedListings,
+
+      user: req.user,
     });
   });
   router.post(

@@ -44,8 +44,10 @@ require("./config/passport")(passport);
 var indexRouter = require("./routes/index")(passport);
 var usersRouter = require("./routes/users")(passport);
 var listingsRouter = require("./routes/listings")();
+var adminRouter = require("./routes/admin")();
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/listings", listingsRouter);
+app.use("/admin", adminRouter);
 
 module.exports = app;

@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+var User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 
 module.exports = {
@@ -30,5 +30,10 @@ module.exports = {
         });
       })
     );
+  },
+  async getAllUsers() {
+    let result = await User.find({ status: 0 });
+
+    return result;
   },
 };

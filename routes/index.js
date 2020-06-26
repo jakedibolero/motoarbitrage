@@ -41,7 +41,7 @@ module.exports = function (passport) {
   /* GET home page. */
   router.get("/", function (req, res, next) {
     if (req.user) {
-      res.render("search");
+      res.redirect("/search");
     } else {
       res.redirect("/login");
     }
@@ -57,7 +57,7 @@ module.exports = function (passport) {
     res,
     next
   ) {
-    res.render("search", { title: "Express" });
+    res.render("search", { user: req.user });
   });
   router.get("/updateDB", function (req, res, next) {
     scheduler.runScrape();
@@ -78,6 +78,7 @@ module.exports = function (passport) {
         data: [],
         savedListings: [],
         keyword: keyword,
+        user: req.user,
       });
     }
 
@@ -104,6 +105,7 @@ module.exports = function (passport) {
         data: listings,
         savedListings: req.user.savedListings,
         keyword: keyword,
+        user: req.user,
       });
     });
   });
