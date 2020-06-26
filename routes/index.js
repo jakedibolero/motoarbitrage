@@ -7,6 +7,13 @@ module.exports = function (passport) {
   var listingLogic = require("../logic/listingLogic");
   var Promise = require("promise");
   var router = express.Router();
+
+  router.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "*");
+    res.header("Access-Control-Allow-Headers", "*");
+    next();
+  });
   const connectEnsureLogin = require("connect-ensure-login");
 
   ///
@@ -52,27 +59,31 @@ module.exports = function (passport) {
   ) {
     res.render("search", { title: "Express" });
   });
-  router.post("/parse", function (req, res, next) {
+  router.get("/updateDB", function (req, res, next) {
+    scheduler.runScrape();
+    res.render("search", { title: "Express" });
+  });
+  router.post("/parse", connectEnsureLogin.ensureLoggedIn(), function (
+    req,
+    res,
+    next
+  ) {
     var keyword = req.body.keyword;
     var refPrice = req.body.refPrice;
     var refPercent = req.body.refPercent;
     let websitesChecked = req.body.websitesChecked;
 
+    if (websitesChecked == undefined) {
+      res.render("result.ejs", {
+        data: [],
+        savedListings: [],
+        keyword: keyword,
+      });
+    }
+
     var listings = [];
     var promises = [];
 
-    // websites.forEach((site) => {
-    //   if (site.group == "usedca") {
-    //     var promise = parseLogic.parseUsedCA(site.url, keyword);
-    //     promises.push(promise);
-    //   } else if (site.group == "kijiji") {
-    //     var promise = parseLogic.parseKijiji(site.url, keyword, "alberta");
-    //     promises.push(promise);
-    //   } else if (site.group == "autotrader") {
-    //     var promise = parseLogic.parseAutoTrader(site.url, keyword, "alberta");
-    //     promises.push(promise);
-    //   }
-    // });
     var promise = listingLogic.searchListing(websitesChecked, keyword);
     console.log(promise);
     promises.push(promise);
@@ -89,13 +100,13 @@ module.exports = function (passport) {
           return el.price <= maxPrice;
         });
       }
-      res.render("result.ejs", { data: listings });
+      res.render("result.ejs", {
+        data: listings,
+        savedListings: req.user.savedListings,
+        keyword: keyword,
+      });
     });
   });
 
-  router.get("/updateDB", function (req, res, next) {
-    scheduler.runScrape();
-    res.send("Processing");
-  });
   return router;
 };

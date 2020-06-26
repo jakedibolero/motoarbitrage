@@ -1,4 +1,5 @@
 var Listing = require("../models/listing.model");
+var User = require("../models/user.model");
 
 module.exports = {
   async updateListingDatabase(listings) {
@@ -10,7 +11,6 @@ module.exports = {
     return listings.length;
   },
   async searchListing(websitesChecked, keywords) {
-    console.log(websitesChecked);
     let result = [];
     let mongoFormatKeyword = keywords
       .split(" ")
@@ -24,5 +24,40 @@ module.exports = {
     });
     console.log(finalResult.length);
     return finalResult;
+  },
+  async saveListing(userID, listingID) {
+    try {
+      var user = await User.findById(userID).exec();
+      var msg = { type: "", msg: "" };
+      if (user == null) {
+        msg.type = "error";
+        msg.msg =
+          "User can't be found or user session has expired. Please log in.";
+        return msg;
+      }
+      var listing = await Listing.findById(listingID).exec();
+      if (listing == null) {
+        msg.type = "error";
+        msg.msg = "This listing doesn't exist anymore";
+        return msg;
+      }
+      if (user.savedListings.find((x) => x._id == listingID) != null) {
+        msg.type = "remove";
+        msg.msg = "Listing unsaved.";
+        user.savedListings = user.savedListings.filter(
+          (x) => x._id != listingID
+        );
+      } else {
+        user.savedListings.push(listing);
+        msg.type = "insert";
+        msg.msg = "Successfully saved the listing!";
+      }
+      user.save();
+      return msg;
+    } catch (e) {
+      msg.type = "error";
+      msg.msg = "Something went wrong while saving. Please try again.";
+      return msg;
+    }
   },
 };

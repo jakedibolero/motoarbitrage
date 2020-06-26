@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+var listing = require("./listing.model").schema;
 const passportLocalMongoose = require("passport-local-mongoose");
 var bcrypt = require("bcrypt");
 
@@ -11,6 +12,7 @@ const userSchema = new Schema({
   dateCreated: String,
   status: Number,
   role: String,
+  savedListings: [listing],
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -22,6 +24,10 @@ userSchema.methods.generateHash = function (password) {
 // checks if password is valid
 userSchema.methods.validPassword = function (password) {
   return bcrypt.compareSync(password, this.password);
+};
+
+userSchema.methods.saveListing = function (listing) {
+  this.savedListings.push(listing);
 };
 
 module.exports = mongoose.model("User", userSchema);

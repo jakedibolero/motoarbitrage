@@ -2,6 +2,7 @@ module.exports = function (passport) {
   var express = require("express");
   var router = express.Router();
   var userLogic = require("../logic/userLogic");
+  const connectEnsureLogin = require("connect-ensure-login");
 
   /* GET users listing. */
   router.get("/", function (req, res, next) {
@@ -11,11 +12,15 @@ module.exports = function (passport) {
     req.logout();
     res.redirect("/");
   });
-  // router.post("/register", (req, res, next) => {
-  //   userLogic.register(req.body).then((message) => {
-  //     res.render("login", { message: message });
-  //   });
-  // });
+  router.get("/favorites", connectEnsureLogin.ensureLoggedIn(), function (
+    req,
+    res
+  ) {
+    res.render("favorites.ejs", {
+      data: req.user.savedListings,
+      savedListings: req.user.savedListings,
+    });
+  });
   router.post(
     "/register",
     passport.authenticate("local-signup", {

@@ -8,24 +8,6 @@ module.exports = {
       bcrypt.hash(user.password, saltRounds, (err, hash) => {
         console.log("HERE");
         User.register({ email: "test@gmail.com", status: 0 }, "test@gmail.com");
-        // User.findOne({ email: user.email }, (err, data) => {
-        //   if (data == null) {
-        //     let newUser = Object.assign(new User(), user);
-        //     newUser.dateCreated = Date.now();
-        //     newUser.password = hash;
-        //     newUser.status = 0;
-        //     newUser.save();
-        //     result = {
-        //       status: 200,
-        //       message: "Successfully registered user!",
-        //     };
-        //     resolve(result);
-        //   } else {
-        //     console.log("Here0");
-        //     result = { status: 300, message: "Email is already in use" };
-        //     resolve(result);
-        //   }
-        // });
       });
     });
     console.log(result);
