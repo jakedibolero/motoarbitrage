@@ -106,6 +106,11 @@
                             width="150px"
                             height="150px"
                           />
+                          <%if(savedListings.some((x) => x._id == data[i]._id.toString())){%>
+                            <a href="#" class="save-listing"  data-id="<%=data[i]._id%>"> <i class="material-icons">star</i></a>
+                          <%}else{%>
+                            <a href="#" class="save-listing"  data-id="<%=data[i]._id%>"> <i class="material-icons">star_border</i></a>
+                          <%}%>
                         </div>
                         <div class="col-md-10">
                           <h4 class="card-title">
@@ -132,11 +137,7 @@
                       </div>
                     </br>
                    
-                    <%if(savedListings.some((x) => x._id == data[i]._id.toString())){%>
-                      <a href="#" class="save-listing"  data-id="<%=data[i]._id%>"> <i class="material-icons">star</i></a>
-                    <%}else{%>
-                      <a href="#" class="save-listing"  data-id="<%=data[i]._id%>"> <i class="material-icons">star_border</i></a>
-                    <%}%>
+
                     </td>
                   </tr>
                   <% } %>
@@ -177,6 +178,7 @@
     ></script>
   </body>
 </html>
+<script src="../js/ip.js"></script>
 <script>
   $(document).ready(function () {
     $("#example").DataTable({
@@ -187,7 +189,7 @@
   });
 
   $(".save-listing").on("click",function(){
-    url = "http://localhost:3000/listings/saveListing"
+    url = `${ip}/listings/saveListing`
     var data = {};
     var element = $(this)
     data.listingID = element.attr("data-id")
