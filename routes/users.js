@@ -12,6 +12,19 @@ module.exports = function (passport) {
     req.logout();
     res.redirect("/");
   });
+  router.get("/settings", connectEnsureLogin.ensureLoggedIn(), function (
+    req,
+    res,
+    next
+  ) {
+    var error = req.flash("error");
+    var message = req.flash("message");
+    res.render("settings.ejs", {
+      user: req.user,
+      error: error,
+      message: message,
+    });
+  });
   router.get("/favorites", connectEnsureLogin.ensureLoggedIn(), function (
     req,
     res
@@ -19,8 +32,26 @@ module.exports = function (passport) {
     res.render("favorites.ejs", {
       data: req.user.savedListings,
       savedListings: req.user.savedListings,
-
       user: req.user,
+    });
+  });
+  router.post("/updateProfile", connectEnsureLogin.ensureLoggedIn(), function (
+    req,
+    res
+  ) {
+    var promise = userLogic.updateProfile(req.body, req.user._id);
+    promise.then((user) => {
+      if (result == null) {
+        req.flash("error", "User not found?");
+      } else {
+        // req.user.firstName = result.firstName;
+        // req.user.lastName = result.lastName;
+        // req.user.email = result.email;
+        // console.log(req.user);
+        req.flash("message", "Succesfully udpated your profile.");
+      }
+
+      res.redirect("settings");
     });
   });
   router.post(

@@ -1,5 +1,6 @@
 var User = require("../models/user.model");
 const bcrypt = require("bcrypt");
+const { update } = require("../models/user.model");
 
 module.exports = {
   async register(user) {
@@ -35,5 +36,17 @@ module.exports = {
     let result = await User.find({ status: 0 });
 
     return result;
+  },
+  async updateProfile(user, userID) {
+    let updateUser = await User.findById(userID).exec();
+    if (updateUser == null) return null;
+    updateUser.firstName = user.firstName;
+    updateUser.lastName = user.lastName;
+    updateUser.email = user.email;
+    if (user.password != "") {
+      updateUser.password = User.generateHash(user.password);
+    }
+    updateUser.save();
+    return updateUser;
   },
 };
