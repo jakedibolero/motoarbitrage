@@ -41,14 +41,13 @@ module.exports = function (passport) {
   ) {
     var promise = userLogic.updateProfile(req.body, req.user._id);
     promise.then((user) => {
-      if (result == null) {
+      if (user == null) {
         req.flash("error", "User not found?");
       } else {
         // req.user.firstName = result.firstName;
         // req.user.lastName = result.lastName;
         // req.user.email = result.email;
-        // console.log(req.user);
-        req.flash("message", "Succesfully udpated your profile.");
+        req.flash("message", "Succesfully updated your profile.");
       }
 
       res.redirect("settings");
@@ -57,7 +56,7 @@ module.exports = function (passport) {
   router.post(
     "/register",
     passport.authenticate("local-signup", {
-      successRedirect: "/search", //redirect to the secure profile section
+      successRedirect: "/login", //redirect to the secure profile section
       failureRedirect: "/login", // redirect back to the signup page if there is an error
       failureFlash: true, // allow flash messages
     })

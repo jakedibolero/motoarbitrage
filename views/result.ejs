@@ -200,7 +200,6 @@
     data: data,
     dataType    : 'json',
     success: function(data){
-      console.log(data);
         if(data.type == "error"){
           alert(data.msg);
         }else if(data.type == "insert"){

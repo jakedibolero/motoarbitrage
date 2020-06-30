@@ -86,7 +86,6 @@ module.exports = function (passport) {
     var promises = [];
 
     var promise = listingLogic.searchListing(websitesChecked, keyword);
-    console.log(promise);
     promises.push(promise);
 
     Promise.all(promises).then((values) => {

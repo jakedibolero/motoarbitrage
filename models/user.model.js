@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 var listing = require("./listing.model").schema;
+var webgroup = require("./webgroup.model").schema;
 const passportLocalMongoose = require("passport-local-mongoose");
 var bcrypt = require("bcrypt");
 
@@ -13,6 +14,7 @@ const userSchema = new Schema({
   status: Number,
   role: String,
   savedListings: [listing],
+  allowedWebgroups: [webgroup],
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -28,6 +30,9 @@ userSchema.methods.validPassword = function (password) {
 
 userSchema.methods.saveListing = function (listing) {
   this.savedListings.push(listing);
+};
+userSchema.methods.activeUser = function (user) {
+  return user.status == 1 ? true : false;
 };
 
 module.exports = mongoose.model("User", userSchema);

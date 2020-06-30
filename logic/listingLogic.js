@@ -12,6 +12,7 @@ module.exports = {
   },
   async searchListing(websitesChecked, keywords) {
     let result = [];
+    //Split the keyword into mongo's prescribed format for AND text searches.
     let mongoFormatKeyword = keywords
       .split(" ")
       .map((str) => `"${str}"`)

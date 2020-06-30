@@ -87,7 +87,6 @@
               <div class="card">
                 <div class="card-header card-header-info">
                   <h4 class="card-title">Users</h4>
-                  <p class="card-category">Here is a subtitle for this table</p>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
@@ -115,12 +114,13 @@
                         <%for(var i=0; i < users.length; i++){%>
                         <tr>
                           <%if(users[i].status == 0){%>
-                          <td class="text-success">
-                            Active
-                          </td>
-                          <%}else{%>
                           <td class="text-danger">
                             Disabled
+                          </td>
+                          <%}else{%>
+
+                          <td class="text-success">
+                            Active
                           </td>
                           <%}%>
                           <td>
@@ -133,33 +133,19 @@
                             <%=users[i].email%>
                           </td>
                           <td>
-                            <button
-                              type="button"
-                              rel="tooltip"
-                              class="btn btn-info btn-link btn-just-icon btn-sm"
-                              data-original-title=""
-                              title=""
+                            <a
+                              href="/admin/manageUser?userID=<%=users[i]._id%>"
                             >
-                              <i class="material-icons">person</i>
-                            </button>
-                            <button
-                              type="button"
-                              rel="tooltip"
-                              class="btn btn-success btn-link btn-just-icon btn-sm"
-                              data-original-title=""
-                              title=""
-                            >
-                              <i class="material-icons">edit</i>
-                            </button>
-                            <button
-                              type="button"
-                              rel="tooltip"
-                              class="btn btn-danger btn-link btn-just-icon btn-sm"
-                              data-original-title=""
-                              title=""
-                            >
-                              <i class="material-icons">close</i>
-                            </button>
+                              <button
+                                type="button"
+                                rel="tooltip"
+                                class="btn btn-info btn-link btn-just-icon btn-sm"
+                                data-original-title=""
+                                title=""
+                              >
+                                <i class="material-icons">person</i>
+                              </button>
+                            </a>
                           </td>
                         </tr>
                         <%}%>
