@@ -46,6 +46,9 @@ module.exports = function (passport) {
       res.redirect("/login");
     }
   });
+  router.get("/index", function (req, res, next) {
+    res.redirect("/");
+  });
   router.get("/login", function (req, res, next) {
     var error = req.flash("error");
     var message = req.flash("message");

@@ -201,6 +201,7 @@
     success: function(data){
       if(data.type == "error"){
           alert(data.msg);
+          element.find("i")[0].innerHTML= "star_border"
         }else if(data.type == "insert"){
           element.find("i")[0].innerHTML= "star"
         }else if(data.type=="remove"){

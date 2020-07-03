@@ -83,14 +83,14 @@
       <div class="content">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-10 mx-auto">
               <div class="card">
                 <div class="card-header card-header-info">
                   <h4 class="card-title">Users</h4>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table id="example" class="table">
+                    <table class="table dashboard">
                       <thead class="text-info">
                         <tr>
                           <th>
@@ -177,8 +177,8 @@
 ></script>
 <script>
   $(document).ready(function () {
-    $("#example").DataTable({
-      scrollY: "400px",
+    $("table.dashboard").DataTable({
+      scrollY: "300px",
       scrollCollapse: true,
       paging: true,
     });

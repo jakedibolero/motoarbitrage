@@ -149,7 +149,7 @@
                   <div class="col-md-6">
                     <%for(var i=0; i < webgroups.length; i++){%>
                     <%if(manageUser.allowedWebgroups.some(x=>x.group ==
-                    webgroups[i].group)){%>
+                    webgroups[i].group)){ %>
                     <div class="form-check">
                       <label class="form-check-label">
                         <input
@@ -224,6 +224,77 @@
           </div>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card">
+            <div class="card-header card-header-info">
+              <h4 class="card-title">Payment history</h4>
+              <a href="payment?userID=<%=manageUser._id%>"
+                ><span class="btn btn-success margin-right">
+                  Add payment
+                </span>
+              </a>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table dashboard">
+                  <thead class="text-info">
+                    <tr>
+                      <th>
+                        Payment Date
+                      </th>
+                      <th>
+                        Payment Amount
+                      </th>
+                      <th>
+                        Admin
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%for(var i=0; i < manageUser.payments.length; i++){%>
+                    <tr>
+                      <% var date = new Date(manageUser.payments[i].paymentDate)
+                      year = date.getFullYear(); month = date.getMonth()+1; dt =
+                      date.getDate(); if (dt < 10) { dt = '0' + dt; } if (month
+                      < 10) { month = '0' + month; } date = year+'-' + month +
+                      '-'+dt%>
+                      <td>
+                        <%=date%>
+                      </td>
+                      <td class="text-center">
+                        $ <%=manageUser.payments[i].paymentAmount%>
+                      </td>
+                      <td><%=manageUser.payments[i].admin.email%></td>
+                      <td>
+                        <a
+                          href="managePayment?paymentID=<%=manageUser.payments[i]._id%>"
+                        >
+                          <button
+                            type="button"
+                            rel="tooltip"
+                            class="btn btn-success btn-link btn-just-icon btn-sm"
+                            data-original-title=""
+                            title=""
+                          >
+                            <i class="material-icons">edit</i>
+                          </button>
+                        </a>
+                      </td>
+                    </tr>
+                    <%}%>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <!--   Core JS Files   -->
     <script src="../js/core/jquery.min.js" type="text/javascript"></script>
@@ -236,3 +307,17 @@
     <script src="../js/material-kit.js" type="text/javascript"></script>
   </body>
 </html>
+<!--Data tables-->
+<script
+  src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"
+  type="text/javascript"
+></script>
+<script>
+  $(document).ready(function () {
+    $("table.dashboard").DataTable({
+      scrollY: "300px",
+      scrollCollapse: true,
+      paging: true,
+    });
+  });
+</script>

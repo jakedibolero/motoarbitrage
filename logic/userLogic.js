@@ -33,7 +33,12 @@ module.exports = {
   //   );
   // },
   async getUser(userID) {
-    let result = await User.findById(userID);
+    let result = await User.findById(userID).populate({
+      path: "payments",
+      populate: {
+        path: "admin",
+      },
+    });
     if (result == null) return null;
     return result;
   },

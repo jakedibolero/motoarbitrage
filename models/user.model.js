@@ -10,11 +10,17 @@ const userSchema = new Schema({
   lastName: String,
   email: String,
   password: String,
-  dateCreated: String,
+  dateCreated: Date,
   status: Number,
   role: String,
   savedListings: [listing],
   allowedWebgroups: [webgroup],
+  payments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Payment",
+    },
+  ],
 });
 
 userSchema.plugin(passportLocalMongoose);

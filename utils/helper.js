@@ -5,4 +5,7 @@ module.exports = {
     var webgroups = Webgroup.find().exec();
     return webgroups;
   },
+  isAdmin(user) {
+    return user.role == "admin" ? true : false;
+  },
 };
